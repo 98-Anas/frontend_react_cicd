@@ -1,0 +1,30 @@
+image: node:18
+
+stages:
+  - install
+  - build
+  - test
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/
+
+install:
+  stage: install
+  script:
+    - npm install
+    - npm audit --production
+
+build:
+  stage: build
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - build/  # React's output directory
+
+test:
+  stage: test
+  script:
+    - CI=true npm test  # Required for React in CI
