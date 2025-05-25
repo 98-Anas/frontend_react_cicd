@@ -75,11 +75,6 @@ https://<username>.gitlab.io/<project-name>
 - [ ] Kubernetes deployment
 - [ ] Performance testing
 
-## Learning Resources
-- [GitLab CI/CD Docs](https://docs.gitlab.com/ee/ci/)
-- [React Best Practices](https://reactjs.org/docs/optimizing-performance.html)
-- [DevSecOps Principles](https://cloud.google.com/devops)
-
 
 ### Recommended Repository Structure:
 ```
