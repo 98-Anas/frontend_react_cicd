@@ -60,14 +60,8 @@ stages:
 - Container scanning (future implementation)
 - **Note:** Linting will be implemented in future iterations
 
-## Deployment
-Automatically deploys to GitLab Pages:
-```
-https://<username>.gitlab.io/<project-name>
-```
-
-## CI/CD Metrics
-![Pipeline Status](https://img.shields.io/gitlab/pipeline-status/fawry-intern1/anas_ayman_elgalad/q2_frontend-cicd-project_finale?branch=main)
+## Pipeline Flow Success
+![alt text](<Screenshot from 2025-05-26 00-37-07.png>)
 
 ## Future Improvements
 - [ ] Implement ESLint integration
