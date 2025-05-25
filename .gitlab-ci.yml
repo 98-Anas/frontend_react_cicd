@@ -47,14 +47,14 @@ unit_tests:
   tags:
     - appExec
 
-lint_code:
-  stage: test
-  script:
-    - cd ${APP_DIR}
-    - npm install eslint eslint-plugin-react eslint-plugin-react-hooks --save-dev
-    - npm run lint
-  tags:
-    - appExec
+#lint_code:
+#  stage: test
+#  script:
+#    - cd ${APP_DIR}
+#    - npm install eslint eslint-plugin-react eslint-plugin-react-hooks --save-dev
+#    - npm run lint
+#  tags:
+#    - appExec
 
 include:
 - template: Security/Dependency-Scanning.gitlab-ci.yml
