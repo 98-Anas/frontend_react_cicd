@@ -25,7 +25,7 @@ install_dependencies:
     paths:
       - ${APP_DIR}/node_modules/
   tags:
-    - docker
+    - appExec
 
 build_app:
   stage: build
@@ -37,7 +37,7 @@ build_app:
       - ${APP_DIR}/build/  # React uses 'build' folder
     expire_in: 1 week
   tags:
-    - docker
+    - appExec
 
 unit_tests:
   stage: test
@@ -45,7 +45,7 @@ unit_tests:
     - cd ${APP_DIR}
     - CI=true npm test  # Required for React in CI environments
   tags:
-    - docker
+    - appExec
 
 lint_code:
   stage: test
@@ -53,7 +53,7 @@ lint_code:
     - cd ${APP_DIR}
     - npm run lint
   tags:
-    - docker
+    - appExec
 
 include:
   - template: Security/SAST.gitlab-ci.yml
@@ -63,7 +63,7 @@ sast:
   variables:
     SAST_EXCLUDED_PATHS: "${APP_DIR}/node_modules,${APP_DIR}/build"
   tags:
-    - docker
+    - appExec
 
 deploy_to_pages:
   stage: deploy
@@ -77,4 +77,4 @@ deploy_to_pages:
   only:
     - main
   tags:
-    - docker
+    - appExec
