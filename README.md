@@ -1,4 +1,3 @@
-```markdown
 # Frontend CI/CD Pipeline with DevSecOps
 
 ![GitLab CI/CD](https://img.shields.io/badge/GitLabCI-%23181717.svg?style=for-the-badge&logo=gitlab&logoColor=white)
@@ -81,7 +80,6 @@ https://<username>.gitlab.io/<project-name>
 - [React Best Practices](https://reactjs.org/docs/optimizing-performance.html)
 - [DevSecOps Principles](https://cloud.google.com/devops)
 
----
 
 ### Recommended Repository Structure:
 ```
