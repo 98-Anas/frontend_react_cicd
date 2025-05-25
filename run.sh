@@ -1,4 +1,4 @@
 clear
 git add .
-git commit -m "Running Pipeline"
+git commit -m "Run Pipeline"
 git push origin main
