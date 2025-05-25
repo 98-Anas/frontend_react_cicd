@@ -1,81 +1,47 @@
+image: node:18  # Uses Docker container with Node pre-installed
+
 stages:
   - install
   - build
   - test
   - security
 
-variables:
-  NODE_VERSION: "18"   # Match your local Node version
-  APP_DIR: "."         # Assumes frontend code is in root
-
 cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:
     - node_modules/
 
-# Install dependencies
 install_deps:
   stage: install
-  image: node:$NODE_VERSION
   script:
     - npm install
-    - npm audit --production  # Basic security check
+    - npm audit --production
   artifacts:
     paths:
       - node_modules/
-  tags:
-    - appExec
 
-# Build the app
 build_app:
   stage: build
-  image: node:$NODE_VERSION
   script:
     - npm run build
   artifacts:
     paths:
-      - dist/                # Angular/React build output
-  tags:
-    - appExec
+      - dist/
 
-# Run tests
 unit_tests:
   stage: test
-  image: node:$NODE_VERSION
   script:
     - npm test -- --watch=false --browsers=ChromeHeadless
-  tags:
-    - appExec
 
 lint_code:
   stage: test
-  image: node:$NODE_VERSION
   script:
-    - npm run lint          # ESLint/Angular linting
-  tags:
-    - appExec
+    - npm run lint
 
-# Security checks (SAST + dependencies)
 include:
   - template: Security/SAST.gitlab-ci.yml
   - template: Security/Dependency-Scanning.gitlab-ci.yml
 
 sast:
   variables:
-    SAST_EXCLUDED_PATHS: "node_modules,dist"  # Ignore build files
-  tags:
-    - appExec
-
-# Optional: Add this to simulate local serve
-serve_locally:
-  stage: test
-  image: node:$NODE_VERSION
-  script:
-    - echo "To run locally:"
-    - echo "1.Install dependencies" 
-    - npm install
-    - echo "2. Start dev server"
-    - npm start
-    - echo "Access app at http://localhost:3000"
-  tags:
-    - appExec
+    SAST_EXCLUDED_PATHS: "node_modules,dist"
