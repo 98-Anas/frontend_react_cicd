@@ -51,6 +51,7 @@ lint_code:
   stage: test
   script:
     - cd ${APP_DIR}
+    - npm install eslint eslint-plugin-react eslint-plugin-react-hooks --save-dev
     - npm run lint
   tags:
     - appExec
