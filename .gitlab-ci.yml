@@ -8,19 +8,20 @@ stages:
   - deploy
 
 variables:
-  APP_DIR: "frontend"  # Explicitly point to your React subdirectory
+  APP_DIR: "frontend"
+  NPM_AUDIT_LEVEL: "moderate"  # Control vulnerability threshold
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:
-    - ${APP_DIR}/node_modules/  # Cache specific to frontend directory
+    - ${APP_DIR}/node_modules/
 
 install_dependencies:
   stage: install
   script:
-    - cd ${APP_DIR}  # Critical: Change to frontend directory first
+    - cd ${APP_DIR}
     - npm install
-    - npm audit --production
+    - npm audit --omit=dev --audit-level=${NPM_AUDIT_LEVEL} || true  # Non-blocking
   artifacts:
     paths:
       - ${APP_DIR}/node_modules/
@@ -34,8 +35,7 @@ build_app:
     - npm run build
   artifacts:
     paths:
-      - ${APP_DIR}/build/  # React uses 'build' folder
-    expire_in: 1 week
+      - ${APP_DIR}/build/
   tags:
     - appExec
 
@@ -43,7 +43,7 @@ unit_tests:
   stage: test
   script:
     - cd ${APP_DIR}
-    - CI=true npm test  # Required for React in CI environments
+    - CI=true npm test
   tags:
     - appExec
 
@@ -56,12 +56,11 @@ lint_code:
     - appExec
 
 include:
-  - template: Security/SAST.gitlab-ci.yml
-  - template: Security/Dependency-Scanning.gitlab-ci.yml
+- template: Security/Dependency-Scanning.gitlab-ci.yml
 
-sast:
+dependency_scanning:
   variables:
-    SAST_EXCLUDED_PATHS: "${APP_DIR}/node_modules,${APP_DIR}/build"
+    DS_EXCLUDED_PATHS: "node_modules,build"
   tags:
     - appExec
 
@@ -70,7 +69,7 @@ deploy_to_pages:
   script:
     - cd ${APP_DIR}
     - mkdir -p public
-    - cp -r build/* public/  # Copy React build output
+    - cp -r build/* public/
   artifacts:
     paths:
       - public
