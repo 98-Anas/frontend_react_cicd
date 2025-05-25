@@ -1,30 +1,112 @@
-image: node:18
-
 stages:
   - install
   - build
   - test
+  - security
+  - deploy
 
+variables:
+  NODE_VERSION: "18"
+  APP_DIR: "frontend"  # Change if your project is in root
+  PRODUCTION_URL: "https://myreactapp.com"  # For DAST
+
+# Cache node_modules and build outputs
 cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:
-    - node_modules/
+    - ${APP_DIR}/node_modules/
+    - ${APP_DIR}/dist/  # Angular
+    # - ${APP_DIR}/build/  # React
 
-install:
+# Shared image for all jobs
+default:
+  image: node:${NODE_VERSION}
+
+# Installation stage
+install_dependencies:
   stage: install
   script:
-    - npm install
-    - npm audit --production
+    - cd ${APP_DIR}
+    - npm ci --prefer-offline
+    - npm audit --production --audit-level=moderate
+  artifacts:
+    paths:
+      - ${APP_DIR}/node_modules/
+  tags:
+    - frontend
 
-build:
+# Build stage
+build_app:
   stage: build
   script:
+    - cd ${APP_DIR}
     - npm run build
   artifacts:
     paths:
-      - build/  # React's output directory
+      - ${APP_DIR}/dist/  # Angular
+      # - ${APP_DIR}/build/  # React
+    expire_in: 1 week
+  tags:
+    - frontend
 
-test:
+# Testing stage
+unit_tests:
   stage: test
   script:
-    - CI=true npm test  # Required for React in CI
+    - cd ${APP_DIR}
+    - npm test -- --watch=false --browsers=ChromeHeadless
+  tags:
+    - frontend
+
+lint_code:
+  stage: test
+  script:
+    - cd ${APP_DIR}
+    - npm run lint
+  tags:
+    - frontend
+
+# Security Stage (SAST + Dependency Scanning)
+include:
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Security/Dependency-Scanning.gitlab-ci.yml
+  - template: Security/DAST.gitlab-ci.yml  # Optional
+
+sast:
+  stage: security
+  variables:
+    SAST_EXCLUDED_PATHS: "node_modules,dist,build"
+    SAST_DISABLE_DIND: "true"
+  tags:
+    - frontend
+
+dependency_scanning:
+  stage: security
+  tags:
+    - frontend
+
+dast:  # Optional
+  stage: security
+  variables:
+    DAST_WEBSITE: ${PRODUCTION_URL}
+    DAST_BROWSER_SCAN: "true"
+  only:
+    - main
+  tags:
+    - frontend
+
+# Deployment Stage
+deploy_to_pages:
+  stage: deploy
+  script:
+    - cd ${APP_DIR}
+    - mkdir -p public
+    - cp -r dist/* public/  # Angular
+    # - cp -r build/* public/  # React
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
+  tags:
+    - frontend
