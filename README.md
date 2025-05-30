@@ -61,6 +61,7 @@ stages:
 - **Note:** Linting will be implemented in future iterations
 
 ## Pipeline Flow Success
+Succeeded Pipeline & RepoLink: https://gitlab.com/fawry-intern1/anas_ayman_elgalad/q2_frontend-cicd-project_finale
 ![alt text](<Screenshot from 2025-05-26 00-37-07.png>)
 
 ## Future Improvements
